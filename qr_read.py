@@ -7,7 +7,7 @@ def qr_read():
     delay = 1
     window_name = 'frame'
 
-    cap = cv2.VideoCapture('/dev/v4l/by-id/usb-9726-200619_Integrated_Camera-video-index0')
+    cap = cv2.VideoCapture('/dev/v4l/by-id/usb-SunplusIT_Inc_HP_TrueVision_HD_Camera-video-index0')
 
     if not cap.isOpened():
         sys.exit()
@@ -15,8 +15,21 @@ def qr_read():
     while True:
         ret, frame = cap.read()
         k = False
-        #cv2.imshow(window_name, frame)
+        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        (thresh, blackAndWhiteFrame) = cv2.threshold(grayFrame, 127, 255, cv2.THRESH_BINARY)
         if ret:
+            for d in decode(blackAndWhiteFrame):
+                s = d.data.decode()
+                k = get_coords(s)
+                blackAndWhiteFrame = cv2.rectangle(blackAndWhiteFrame, (d.rect.left, d.rect.top),
+                                    (d.rect.left + d.rect.width, d.rect.top + d.rect.height), (0, 255, 0), 3)
+                blackAndWhiteFrame = cv2.putText(blackAndWhiteFrame, s, (d.rect.left, d.rect.top + d.rect.height),
+                                    cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA)
+                cx = int(d.rect.left + d.rect.width/2)
+                cy = int(d.rect.top + d.rect.height/2)
+                blackAndWhiteFrame = cv2.circle(blackAndWhiteFrame, (cx, cy), 5, (25, 25, 25), 3)
+                print(cx, cy)
+            cv2.imshow('bw frame', blackAndWhiteFrame)
             for d in decode(frame):
                 s = d.data.decode()
                 k = get_coords(s)
@@ -24,8 +37,12 @@ def qr_read():
                                     (d.rect.left + d.rect.width, d.rect.top + d.rect.height), (0, 255, 0), 3)
                 frame = cv2.putText(frame, s, (d.rect.left, d.rect.top + d.rect.height),
                                     cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA)
-            cv2.imshow(window_name, frame)
-        if (cv2.waitKey(delay) & 0xFF == ord('q')) or k:
+                cx = int(d.rect.left + d.rect.width/2)
+                cy = int(d.rect.top + d.rect.height/2)
+                frame = cv2.circle(frame, (cx, cy), 5, (25, 25, 25), 3)
+                print(cx, cy)
+            cv2.imshow('frame', frame)
+        if (cv2.waitKey(delay) & 0xFF == ord('q')):
             break
 
     cv2.destroyWindow(window_name)
@@ -33,6 +50,7 @@ def qr_read():
 def get_coords(s):
     coords1 = []
     coords2 = []
+    coords = []
     if(s!=''):
         x = s.split(",")
         if(np.size(x)==4):
