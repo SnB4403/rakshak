@@ -2,22 +2,32 @@ import cv2
 import sys
 from pyzbar.pyzbar import decode
 import numpy as np
+import imutils
+import requests
+  
+# Replace the below URL with your own. Make sure to add "/shot.jpg" at last.
+url = "http://192.168.0.102:8080/shot.jpg"
+  
 
 def qr_read():
     delay = 1
     window_name = 'frame'
 
-    cap = cv2.VideoCapture('/dev/v4l/by-id/usb-SunplusIT_Inc_HP_TrueVision_HD_Camera-video-index0')
+    #cap = cv2.VideoCapture('/dev/v4l/by-id/usb-SunplusIT_Inc_HP_TrueVision_HD_Camera-video-index0')
 
-    if not cap.isOpened():
-        sys.exit()
+    #if not cap.isOpened():
+        #sys.exit()
 
     while True:
-        ret, frame = cap.read()
+        #ret, frame = cap.read()
+        img_resp = requests.get(url)
+        img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
+        frame = cv2.imdecode(img_arr, -1)
+        frame = imutils.resize(frame, width=1000, height=1800)
         k = False
         grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        (thresh, blackAndWhiteFrame) = cv2.threshold(grayFrame, 127, 255, cv2.THRESH_BINARY)
-        if ret:
+        (thresh, blackAndWhiteFrame) = cv2.threshold(grayFrame, 80, 255, cv2.THRESH_BINARY)
+        if True:
             for d in decode(blackAndWhiteFrame):
                 s = d.data.decode()
                 k = get_coords(s)
