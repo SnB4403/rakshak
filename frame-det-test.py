@@ -86,7 +86,7 @@ def approx_frame_center(red_contours):
                 center_x = int(np.average(centers_x, weights=area))
                 center_y = int(np.average(centers_y, weights=area))
                 return red_contours_clean[0:resolution], y_max
-
+        
         
 while True:
     ret, frame = cap.read()
