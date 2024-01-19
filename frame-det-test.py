@@ -4,7 +4,7 @@ import numpy as np
 
 delay = 1
 
-cap = cv2.VideoCapture('/dev/v4l/by-id/usb-SunplusIT_Inc_HP_TrueVision_HD_Camera-video-index0')
+cap = cv2.VideoCapture(0)
 if not cap.isOpened():
         sys.exit()
 
