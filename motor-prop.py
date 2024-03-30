@@ -17,8 +17,8 @@ output_file = "output.txt"
 # Create a list to store the data
 data_list = []
 I = 6.5
-target_vel = 16*2.237
-target_thrust = 9.8*2
+target_vel = 2.237*14 # [m/s] to [mph]
+target_thrust = 9.81*1 # [kg] to [N]
 
 for file_path in dat_files:
     rpm_dict = {}
@@ -37,7 +37,6 @@ for file_path in dat_files:
                 if(len(data)==4):
                     try:
                         rpm = float(cnt_rpm)
-                        
                     except:
                         pass
                     cnt_rpm = data[-1]
@@ -118,7 +117,8 @@ for file_path in dat_files:
     Tor_l = torques[lower_bound_index]
     Thrust_u = thrusts[upper_bound_index]
     Thrust_l = thrusts[lower_bound_index]
-    # print()
+
+    # print((Thrust_l,Thrust_u))
 
     # Print the upper bound line
     upper_bound_line = f"Upper bound at rpm {rpm_u} with torque {Tor_u} and thrust {Thrust_u}"
@@ -168,7 +168,6 @@ plt.scatter(rpm_data, torque_data, c='blue', marker='o', alpha=0.5)
 plt.title('Torque vs. RPM')
 plt.xlabel('RPM')
 plt.ylabel('Torque')
-plt.xlim([0, 9000])
 plt.plot([0, 4404], [0, 0.48], c='red')
 plt.grid(True)
 plt.show()
