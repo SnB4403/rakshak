@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 *.dat
 *.json
 *.stash
 *.log
 *.txt
+=======
+*.jpeg
+*.png
+>>>>>>> a482b7a1660d4069f7b3af569addc7b5675d5db9
